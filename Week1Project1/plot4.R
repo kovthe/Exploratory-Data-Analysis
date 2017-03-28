@@ -1,0 +1,23 @@
+
+initial <- read.table("household_power_consumption.txt", nrows = 100)
+classes <- sapply(initial, class)
+tabAll <- read.table("household_power_consumption.txt",sep=";",header = TRUE, na.strings ="?")
+tabAll$Date <- as.Date(tabAll$Date, "%d/%m/%Y")
+subdata <- subset(tabAll,tabAll$Date >= "2007-02-01" & tabAll$Date <= "2007-02-02")
+subdata <- na.omit(subdata)
+DateTime <- with(subdata, as.POSIXct(paste(Date, Time), format="%Y-%m-%d %H:%M:%S"))
+dat <- subset(subdata, select=-c(Date,Time))
+dat <- cbind(DateTime,dat)
+head(dat)
+
+#Plot4
+png(file="plot4.png",width=480,height=480)
+par(mfrow=c(2,2), mar=c(4,4,2,1), oma=c(0,0,2,0))
+plot(dat$Global_active_power~dat$DateTime, type="l", ylab="Global Active Power (kilowatts)", xlab="")
+plot(dat$Voltage~dat$DateTime, type="l", ylab="Voltage (volt)", xlab="datetime")
+plot(dat$Sub_metering_1~dat$DateTime, type="l", ylab="Enerygy sub metering", xlab="",ylim = c(0,30))
+lines(dat$Sub_metering_2~dat$DateTime, type="l",ann=FALSE, axes=FALSE, col = "orange",ylim = c(0,30))
+lines(dat$Sub_metering_3~dat$DateTime, type="l",ann=FALSE, axes=FALSE,col = "blue",ylim = c(0,30))
+legend(x="topright", col=c("black", "red", "blue"), lwd=c(1,1,1),legend=c("Sub_metering_1", "Sub_metering_2", "Sub_metering_3"))
+plot(dat$Global_reactive_power~dat$DateTime, type="l", ylab="Global_reactive_power", xlab="")
+dev.off()

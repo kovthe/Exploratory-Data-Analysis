@@ -1,0 +1,21 @@
+library(dplyr)
+library(data.table)
+library(lubridate)
+getwd()
+initial <- read.table("household_power_consumption.txt", nrows = 100)
+classes <- sapply(initial, class)
+tabAll <- read.table("household_power_consumption.txt",sep=";",header = TRUE, na.strings ="?")
+head(tabAll)
+str(tabAll)
+dim(tabAll)
+class(tabAll)
+tabAll$Date <- as.Date(tabAll$Date, "%d/%m/%Y")
+tabAll$Time <- strptime(tabAll$Time, "%y-%m-%d %H:%M:%S")
+subdata <- subset(tabAll,tabAll$Date >= "2007-02-01" & tabAll$Date <= "2007-02-02")
+head(subdata)
+
+#Plot 1
+png(file="plot1.png",width=480,height=480)
+hist(as.numeric(subdata$Global_active_power), col="red", xlab="Global Active Power (kilowatts)", main="Global Active Power")
+dev.off()
+
